@@ -8,4 +8,12 @@ void main() {
     final service = container.read(serviceProvider);
     await service.calc();
   });
+
+  test('UnmountedRefException does not occur test', () async {
+    final container = ProviderContainer.test();
+    final sub = container.listen(serviceProvider, (previous, next) {});
+    final service = sub.read();
+    await service.calc();
+    sub.close();
+  });
 }
