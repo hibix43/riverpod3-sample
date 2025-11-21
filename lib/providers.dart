@@ -10,15 +10,30 @@ class Repository {
   }
 }
 
-class Service {
+class ServiceWithoutRef {
   final Repository repository;
   final void Function(String) runSideEffect;
 
-  const Service({required this.repository, required this.runSideEffect});
+  const ServiceWithoutRef({
+    required this.repository,
+    required this.runSideEffect,
+  });
 
   Future<void> calc() async {
     final data = await repository.fetchData();
     runSideEffect(data);
+  }
+}
+
+class ServiceWithRef {
+  final Ref ref;
+
+  const ServiceWithRef({required this.ref});
+
+  Future<void> calc() async {
+    final repository = ref.read(repositoryProvider);
+    final data = await repository.fetchData();
+    ref.read(runSideEffectProvider)(data);
   }
 }
 
@@ -35,8 +50,8 @@ Repository repository(Ref ref) {
 }
 
 @riverpod
-Service service(Ref ref) {
-  return Service(
+ServiceWithoutRef serviceWithoutRef(Ref ref) {
+  return ServiceWithoutRef(
     repository: ref.watch(repositoryProvider),
     runSideEffect: (data) {
       // UnmountedRefException (Cannot use the Ref of  after it has been disposed.
@@ -48,4 +63,18 @@ Service service(Ref ref) {
       // sub.close();
     },
   );
+}
+
+@riverpod
+ServiceWithoutRef serviceWithoutRef2(Ref ref) {
+  final runSideEffectFunction = ref.watch(runSideEffectProvider);
+  return ServiceWithoutRef(
+    repository: ref.watch(repositoryProvider),
+    runSideEffect: runSideEffectFunction,
+  );
+}
+
+@riverpod
+ServiceWithRef serviceWithRef(Ref ref) {
+  return ServiceWithRef(ref: ref);
 }
