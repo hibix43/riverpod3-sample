@@ -23,6 +23,21 @@ class ServiceWithoutRef {
     final data = await repository.fetchData();
     runSideEffect(data);
   }
+
+  Future<void> calcWithRetry({int retryCount = 0}) async {
+    try {
+      final data = await repository.fetchData();
+      runSideEffect(data);
+    } catch (e) {
+      if (retryCount < 3) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        await calcWithRetry(retryCount: retryCount + 1);
+      } else {
+        debugPrint('retry count is over 3 with error: $e');
+        rethrow;
+      }
+    }
+  }
 }
 
 class ServiceWithRef {
@@ -34,6 +49,21 @@ class ServiceWithRef {
     final repository = ref.read(repositoryProvider);
     final data = await repository.fetchData();
     ref.read(runSideEffectProvider)(data);
+  }
+
+  Future<void> calcWithRetry({int retryCount = 0}) async {
+    try {
+      final data = await ref.read(repositoryProvider).fetchData();
+      ref.read(runSideEffectProvider)(data);
+    } catch (e) {
+      if (retryCount < 3) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        await calcWithRetry(retryCount: retryCount + 1);
+      } else {
+        debugPrint('retry count is over 3 with error: $e');
+        rethrow;
+      }
+    }
   }
 }
 

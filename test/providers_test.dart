@@ -72,6 +72,57 @@ void main() {
       await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
       sub.close();
     });
+
+    test('withoutRef_read_成功_例外期待_リトライ', () async {
+      final container = ProviderContainer.test(
+        overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
+      );
+      final service = container.read(serviceWithoutRefProvider);
+      await expectLater(
+        service.calcWithRetry(),
+        throwsA(isA<FetchDataError>()),
+      );
+    });
+
+    test('withoutRef_listen_成功_例外期待_リトライ', () async {
+      final container = ProviderContainer.test(
+        overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
+      );
+      final sub = container.listen(
+        serviceWithoutRefProvider,
+        (previous, next) {},
+      );
+      final service = sub.read();
+      await expectLater(
+        service.calcWithRetry(),
+        throwsA(isA<FetchDataError>()),
+      );
+      sub.close();
+    });
+
+    test('withoutRef2_read_成功_例外期待_リトライ', () async {
+      final container = ProviderContainer.test(
+        overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
+      );
+      final service = container.read(serviceWithoutRef2Provider);
+      await expectLater(
+        service.calcWithRetry(),
+        throwsA(isA<FetchDataError>()),
+      );
+    });
+  });
+
+  test('withoutRef2_listen_成功_例外期待_リトライ', () async {
+    final container = ProviderContainer.test(
+      overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
+    );
+    final sub = container.listen(
+      serviceWithoutRef2Provider,
+      (previous, next) {},
+    );
+    final service = sub.read();
+    await expectLater(service.calcWithRetry(), throwsA(isA<FetchDataError>()));
+    sub.close();
   });
 
   group('ServiceWithRef', () {
@@ -104,6 +155,33 @@ void main() {
       final sub = container.listen(serviceWithRefProvider, (previous, next) {});
       final service = sub.read();
       await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
+      sub.close();
+    });
+
+    // calcWithRetryを実行する前に500ms待つようにすると失敗する
+    // →逆に500msを待つ処理を削除すると成功する
+    // →非同期処理の時間がautoDisposeによるRefの破棄より長い場合に失敗すると言えそう
+    test('withRef_read_失敗_例外期待_リトライ', () async {
+      final container = ProviderContainer.test(
+        overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
+      );
+      final service = container.read(serviceWithRefProvider);
+      await expectLater(
+        service.calcWithRetry(),
+        throwsA(isA<FetchDataError>()),
+      );
+    });
+
+    test('withRef_listen_成功_例外期待_リトライ', () async {
+      final container = ProviderContainer.test(
+        overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
+      );
+      final sub = container.listen(serviceWithRefProvider, (previous, next) {});
+      final service = sub.read();
+      await expectLater(
+        service.calcWithRetry(),
+        throwsA(isA<FetchDataError>()),
+      );
       sub.close();
     });
   });
