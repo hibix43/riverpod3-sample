@@ -53,7 +53,8 @@ class ServiceWithRef {
 
   Future<void> calcWithRetry({int retryCount = 0}) async {
     try {
-      final data = await ref.read(repositoryProvider).fetchData();
+      final repository = ref.read(repositoryProvider);
+      final data = await repository.fetchData();
       ref.read(runSideEffectProvider)(data);
     } catch (e) {
       if (retryCount < 3) {
