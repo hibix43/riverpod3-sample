@@ -44,7 +44,7 @@ void main() {
         overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
       );
       final service = container.read(serviceWithoutRefProvider);
-      await expectLater(service.calc(), throwsA(isA<Exception>()));
+      await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
     });
 
     test('withoutRef_listen_成功_例外期待', () async {
@@ -56,7 +56,7 @@ void main() {
         (previous, next) {},
       );
       final service = sub.read();
-      await expectLater(service.calc(), throwsA(isA<Exception>()));
+      await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
       sub.close();
     });
 
@@ -69,7 +69,7 @@ void main() {
         (previous, next) {},
       );
       final service = sub.read();
-      await expectLater(service.calc(), throwsA(isA<Exception>()));
+      await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
       sub.close();
     });
   });
@@ -94,7 +94,7 @@ void main() {
         overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
       );
       final service = container.read(serviceWithRefProvider);
-      await expectLater(service.calc(), throwsA(isA<Exception>()));
+      await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
     });
 
     test('withRef_listen_成功_例外期待', () async {
@@ -103,7 +103,7 @@ void main() {
       );
       final sub = container.listen(serviceWithRefProvider, (previous, next) {});
       final service = sub.read();
-      await expectLater(service.calc(), throwsA(isA<Exception>()));
+      await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
       sub.close();
     });
   });
@@ -112,6 +112,10 @@ void main() {
 class MockRepository extends Mock implements Repository {
   @override
   Future<String> fetchData() async {
-    throw Exception('test');
+    throw FetchDataError();
   }
+}
+
+class FetchDataError extends Error {
+  FetchDataError();
 }
