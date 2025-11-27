@@ -66,6 +66,28 @@ class ServiceWithRef {
       }
     }
   }
+
+  Future<void> calcWithFuture() async {
+    final repository = await ref.read(repositoryForFutureProvider.future);
+    final data = await repository.fetchData();
+    debugPrint("side effect: $data");
+  }
+
+  Future<void> calcWithFutureWithRetry({int retryCount = 0}) async {
+    try {
+      final repository = await ref.read(repositoryForFutureProvider.future);
+      final data = await repository.fetchData();
+      debugPrint("side effect: $data");
+    } catch (e) {
+      if (retryCount < 3) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        await calcWithFutureWithRetry(retryCount: retryCount + 1);
+      } else {
+        debugPrint('retry count is over 3 with error: $e');
+        rethrow;
+      }
+    }
+  }
 }
 
 @riverpod
@@ -77,6 +99,12 @@ void Function(String) runSideEffect(Ref ref) {
 
 @riverpod
 Repository repository(Ref ref) {
+  return Repository();
+}
+
+@riverpod
+Future<Repository> repositoryForFuture(Ref ref) async {
+  await Future.delayed(const Duration(seconds: 1));
   return Repository();
 }
 

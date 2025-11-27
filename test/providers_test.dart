@@ -184,6 +184,76 @@ void main() {
       );
       sub.close();
     });
+
+    test('withRef_read_成功_Future期待', () async {
+      final container = ProviderContainer.test();
+      final service = container.read(serviceWithRefProvider);
+      await service.calcWithFuture();
+    });
+
+    test('withRef_listen_成功_Future期待', () async {
+      final container = ProviderContainer.test();
+      final sub = container.listen(serviceWithRefProvider, (previous, next) {});
+      final service = sub.read();
+      await service.calcWithFuture();
+      sub.close();
+    });
+
+    test('withRef_read_成功_Future期待_例外期待', () async {
+      final container = ProviderContainer.test(
+        overrides: [
+          repositoryForFutureProvider.overrideWith((r) => MockRepository()),
+        ],
+      );
+      final service = container.read(serviceWithRefProvider);
+      await expectLater(
+        service.calcWithFuture(),
+        throwsA(isA<FetchDataError>()),
+      );
+    });
+
+    test('withRef_listen_成功_Future期待_例外期待', () async {
+      final container = ProviderContainer.test(
+        overrides: [
+          repositoryForFutureProvider.overrideWith((r) => MockRepository()),
+        ],
+      );
+      final sub = container.listen(serviceWithRefProvider, (previous, next) {});
+      final service = sub.read();
+      await expectLater(
+        service.calcWithFuture(),
+        throwsA(isA<FetchDataError>()),
+      );
+      sub.close();
+    });
+
+    test('withRef_read_失敗_Future期待_例外期待_リトライ', () async {
+      final container = ProviderContainer.test(
+        overrides: [
+          repositoryForFutureProvider.overrideWith((r) => MockRepository()),
+        ],
+      );
+      final service = container.read(serviceWithRefProvider);
+      await expectLater(
+        service.calcWithFutureWithRetry(),
+        throwsA(isA<FetchDataError>()),
+      );
+    });
+
+    test('withRef_listen_成功_Future期待_例外期待_リトライ', () async {
+      final container = ProviderContainer.test(
+        overrides: [
+          repositoryForFutureProvider.overrideWith((r) => MockRepository()),
+        ],
+      );
+      final sub = container.listen(serviceWithRefProvider, (previous, next) {});
+      final service = sub.read();
+      await expectLater(
+        service.calcWithFutureWithRetry(),
+        throwsA(isA<FetchDataError>()),
+      );
+      sub.close();
+    });
   });
 }
 
