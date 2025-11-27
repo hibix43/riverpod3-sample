@@ -44,7 +44,7 @@ void main() {
         overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
       );
       final service = container.read(serviceWithoutRefProvider);
-      await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
+      await expectLater(service.calc, throwsA(isA<FetchDataError>()));
     });
 
     test('withoutRef_listen_成功_例外期待', () async {
@@ -78,10 +78,7 @@ void main() {
         overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
       );
       final service = container.read(serviceWithoutRefProvider);
-      await expectLater(
-        service.calcWithRetry(),
-        throwsA(isA<FetchDataError>()),
-      );
+      await expectLater(service.calcWithRetry, throwsA(isA<FetchDataError>()));
     });
 
     test('withoutRef_listen_成功_例外期待_リトライ', () async {
@@ -105,10 +102,7 @@ void main() {
         overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
       );
       final service = container.read(serviceWithoutRef2Provider);
-      await expectLater(
-        service.calcWithRetry(),
-        throwsA(isA<FetchDataError>()),
-      );
+      await expectLater(service.calcWithRetry, throwsA(isA<FetchDataError>()));
     });
   });
 
@@ -121,7 +115,7 @@ void main() {
       (previous, next) {},
     );
     final service = sub.read();
-    await expectLater(service.calcWithRetry(), throwsA(isA<FetchDataError>()));
+    await expectLater(service.calcWithRetry, throwsA(isA<FetchDataError>()));
     sub.close();
   });
 
@@ -145,7 +139,7 @@ void main() {
         overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
       );
       final service = container.read(serviceWithRefProvider);
-      await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
+      await expectLater(service.calc, throwsA(isA<FetchDataError>()));
     });
 
     test('withRef_listen_成功_例外期待', () async {
@@ -154,7 +148,7 @@ void main() {
       );
       final sub = container.listen(serviceWithRefProvider, (previous, next) {});
       final service = sub.read();
-      await expectLater(service.calc(), throwsA(isA<FetchDataError>()));
+      await expectLater(service.calc, throwsA(isA<FetchDataError>()));
       sub.close();
     });
 
@@ -166,10 +160,7 @@ void main() {
         overrides: [repositoryProvider.overrideWith((r) => MockRepository())],
       );
       final service = container.read(serviceWithRefProvider);
-      await expectLater(
-        service.calcWithRetry(),
-        throwsA(isA<FetchDataError>()),
-      );
+      await expectLater(service.calcWithRetry, throwsA(isA<FetchDataError>()));
     });
 
     test('withRef_listen_成功_例外期待_リトライ', () async {
@@ -178,10 +169,7 @@ void main() {
       );
       final sub = container.listen(serviceWithRefProvider, (previous, next) {});
       final service = sub.read();
-      await expectLater(
-        service.calcWithRetry(),
-        throwsA(isA<FetchDataError>()),
-      );
+      await expectLater(service.calcWithRetry, throwsA(isA<FetchDataError>()));
       sub.close();
     });
 
@@ -206,10 +194,7 @@ void main() {
         ],
       );
       final service = container.read(serviceWithRefProvider);
-      await expectLater(
-        service.calcWithFuture(),
-        throwsA(isA<FetchDataError>()),
-      );
+      await expectLater(service.calcWithFuture, throwsA(isA<FetchDataError>()));
     });
 
     test('withRef_listen_成功_Future期待_例外期待', () async {
@@ -220,10 +205,7 @@ void main() {
       );
       final sub = container.listen(serviceWithRefProvider, (previous, next) {});
       final service = sub.read();
-      await expectLater(
-        service.calcWithFuture(),
-        throwsA(isA<FetchDataError>()),
-      );
+      await expectLater(service.calcWithFuture, throwsA(isA<FetchDataError>()));
       sub.close();
     });
 
@@ -235,7 +217,7 @@ void main() {
       );
       final service = container.read(serviceWithRefProvider);
       await expectLater(
-        service.calcWithFutureWithRetry(),
+        service.calcWithFutureWithRetry,
         throwsA(isA<FetchDataError>()),
       );
     });
@@ -249,7 +231,7 @@ void main() {
       final sub = container.listen(serviceWithRefProvider, (previous, next) {});
       final service = sub.read();
       await expectLater(
-        service.calcWithFutureWithRetry(),
+        service.calcWithFutureWithRetry,
         throwsA(isA<FetchDataError>()),
       );
       sub.close();
