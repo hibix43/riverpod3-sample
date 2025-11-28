@@ -216,7 +216,7 @@ void main() {
       sub.close();
     });
 
-    test('executeWithServiceWithoutRef2_listen_失敗', () async {
+    test('executeWithServiceWithoutRef2_listen_成功', () async {
       final container = ProviderContainer.test();
       final sub = container.listen(
         syncStateUseCaseProvider.notifier,

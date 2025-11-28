@@ -204,7 +204,7 @@ extension on Ref {
   Future<T> readFirst<T>(Refreshable<Future<T>> listenable) async {
     final subscription = listen(listenable, (p, n) {});
     try {
-      return subscription.read();
+      return await subscription.read();
     } finally {
       subscription.close();
     }
