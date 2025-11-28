@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart' show debugPrint;
+import 'package:flutter_riverpod/misc.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'providers.g.dart';
@@ -145,12 +146,14 @@ class SyncStateUseCaseNotifier extends _$SyncStateUseCaseNotifier {
   }
 
   Future<void> executeWithServiceWithoutRef() async {
-    final service = await ref.read(serviceWithoutRefProvider.future);
+    // final service = await ref.read(serviceWithoutRefProvider.future);
+    final service = await ref.readFirst(serviceWithoutRefProvider.future);
     await service.calc();
   }
 
   Future<void> executeWithServiceWithoutRef2() async {
-    final service = await ref.read(serviceWithoutRef2Provider.future);
+    // final service = await ref.read(serviceWithoutRef2Provider.future);
+    final service = await ref.readFirst(serviceWithoutRef2Provider.future);
     await service.calc();
   }
 
@@ -170,7 +173,8 @@ class AsyncStateUseCaseNotifier extends _$AsyncStateUseCaseNotifier {
   Future<void> executeWithServiceWithoutRef() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final service = await ref.read(serviceWithoutRefProvider.future);
+      // final service = await ref.read(serviceWithoutRefProvider.future);
+      final service = await ref.readFirst(serviceWithoutRefProvider.future);
       await service.calc();
       return;
     });
@@ -179,7 +183,8 @@ class AsyncStateUseCaseNotifier extends _$AsyncStateUseCaseNotifier {
   Future<void> executeWithServiceWithoutRef2() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final service = await ref.read(serviceWithoutRef2Provider.future);
+      // final service = await ref.read(serviceWithoutRef2Provider.future);
+      final service = await ref.readFirst(serviceWithoutRef2Provider.future);
       await service.calc();
       return;
     });
@@ -192,5 +197,16 @@ class AsyncStateUseCaseNotifier extends _$AsyncStateUseCaseNotifier {
       await service.calc();
       return;
     });
+  }
+}
+
+extension on Ref {
+  Future<T> readFirst<T>(Refreshable<Future<T>> listenable) async {
+    final subscription = listen(listenable, (p, n) {});
+    try {
+      return subscription.read();
+    } finally {
+      subscription.close();
+    }
   }
 }
