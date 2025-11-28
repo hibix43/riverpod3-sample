@@ -185,6 +185,59 @@ void main() {
       sub.close();
     });
   });
+
+  group('UseCaseNotifier', () {
+    test('executeWithServiceWithoutRef_read_失敗', () async {
+      final container = ProviderContainer.test();
+      final notifier = container.read(useCaseProvider.notifier);
+      await notifier.executeWithServiceWithoutRef();
+    });
+
+    test('executeWithServiceWithRef_read_失敗', () async {
+      final container = ProviderContainer.test();
+      final notifier = container.read(useCaseProvider.notifier);
+      await notifier.executeWithServiceWithRef();
+    });
+
+    test('executeWithServiceWithoutRef2_read_失敗', () async {
+      final container = ProviderContainer.test();
+      final notifier = container.read(useCaseProvider.notifier);
+      await notifier.executeWithServiceWithoutRef2();
+    });
+
+    test('executeWithServiceWithoutRef_listen_成功', () async {
+      final container = ProviderContainer.test();
+      final sub = container.listen(
+        useCaseProvider.notifier,
+        (previous, next) {},
+      );
+      final notifier = sub.read();
+      await notifier.executeWithServiceWithoutRef();
+      sub.close();
+    });
+
+    test('executeWithServiceWithRef_listen_成功', () async {
+      final container = ProviderContainer.test();
+      final sub = container.listen(
+        useCaseProvider.notifier,
+        (previous, next) {},
+      );
+      final notifier = sub.read();
+      await notifier.executeWithServiceWithRef();
+      sub.close();
+    });
+
+    test('executeWithServiceWithoutRef2_listen_成功', () async {
+      final container = ProviderContainer.test();
+      final sub = container.listen(
+        useCaseProvider.notifier,
+        (previous, next) {},
+      );
+      final notifier = sub.read();
+      await notifier.executeWithServiceWithoutRef2();
+      sub.close();
+    });
+  });
 }
 
 class MockDriver extends Mock implements Driver {

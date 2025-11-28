@@ -136,3 +136,38 @@ Future<ServiceWithoutRef> serviceWithoutRef2(Ref ref) async {
 ServiceWithRef serviceWithRef(Ref ref) {
   return ServiceWithRef(ref: ref);
 }
+
+@riverpod
+class UseCaseNotifier extends _$UseCaseNotifier {
+  @override
+  Future<void> build() async {
+    return;
+  }
+
+  Future<void> executeWithServiceWithoutRef() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final service = await ref.read(serviceWithoutRefProvider.future);
+      await service.calc();
+      return;
+    });
+  }
+
+  Future<void> executeWithServiceWithoutRef2() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final service = await ref.read(serviceWithoutRef2Provider.future);
+      await service.calc();
+      return;
+    });
+  }
+
+  Future<void> executeWithServiceWithRef() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final service = ref.read(serviceWithRefProvider);
+      await service.calc();
+      return;
+    });
+  }
+}
