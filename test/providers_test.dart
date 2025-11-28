@@ -186,29 +186,82 @@ void main() {
     });
   });
 
-  group('UseCaseNotifier', () {
+  group('SyncStateUseCaseNotifier', () {
     test('executeWithServiceWithoutRef_read_失敗', () async {
       final container = ProviderContainer.test();
-      final notifier = container.read(useCaseProvider.notifier);
+      final notifier = container.read(syncStateUseCaseProvider.notifier);
+      await notifier.executeWithServiceWithoutRef();
+    });
+
+    test('executeWithServiceWithoutRef2_read_失敗', () async {
+      final container = ProviderContainer.test();
+      final notifier = container.read(syncStateUseCaseProvider.notifier);
+      await notifier.executeWithServiceWithoutRef2();
+    });
+
+    test('executeWithServiceWithRef_read_失敗', () async {
+      final container = ProviderContainer.test();
+      final notifier = container.read(syncStateUseCaseProvider.notifier);
+      await notifier.executeWithServiceWithRef();
+    });
+
+    test('executeWithServiceWithoutRef_listen_失敗', () async {
+      final container = ProviderContainer.test();
+      final sub = container.listen(
+        syncStateUseCaseProvider.notifier,
+        (previous, next) {},
+      );
+      final notifier = sub.read();
+      await notifier.executeWithServiceWithoutRef();
+      sub.close();
+    });
+
+    test('executeWithServiceWithoutRef2_listen_失敗', () async {
+      final container = ProviderContainer.test();
+      final sub = container.listen(
+        syncStateUseCaseProvider.notifier,
+        (previous, next) {},
+      );
+      final notifier = sub.read();
+      await notifier.executeWithServiceWithoutRef2();
+      sub.close();
+    });
+
+    test('executeWithServiceWithRef_listen_失敗', () async {
+      final container = ProviderContainer.test();
+      final sub = container.listen(
+        syncStateUseCaseProvider.notifier,
+        (previous, next) {},
+      );
+      final notifier = sub.read();
+      await notifier.executeWithServiceWithRef();
+      sub.close();
+    });
+  });
+
+  group('AsyncStateUseCaseNotifier', () {
+    test('executeWithServiceWithoutRef_read_失敗', () async {
+      final container = ProviderContainer.test();
+      final notifier = container.read(asyncStateUseCaseProvider.notifier);
       await notifier.executeWithServiceWithoutRef();
     });
 
     test('executeWithServiceWithRef_read_失敗', () async {
       final container = ProviderContainer.test();
-      final notifier = container.read(useCaseProvider.notifier);
+      final notifier = container.read(asyncStateUseCaseProvider.notifier);
       await notifier.executeWithServiceWithRef();
     });
 
     test('executeWithServiceWithoutRef2_read_失敗', () async {
       final container = ProviderContainer.test();
-      final notifier = container.read(useCaseProvider.notifier);
+      final notifier = container.read(asyncStateUseCaseProvider.notifier);
       await notifier.executeWithServiceWithoutRef2();
     });
 
     test('executeWithServiceWithoutRef_listen_成功', () async {
       final container = ProviderContainer.test();
       final sub = container.listen(
-        useCaseProvider.notifier,
+        asyncStateUseCaseProvider.notifier,
         (previous, next) {},
       );
       final notifier = sub.read();
@@ -219,7 +272,7 @@ void main() {
     test('executeWithServiceWithRef_listen_成功', () async {
       final container = ProviderContainer.test();
       final sub = container.listen(
-        useCaseProvider.notifier,
+        asyncStateUseCaseProvider.notifier,
         (previous, next) {},
       );
       final notifier = sub.read();
@@ -230,7 +283,7 @@ void main() {
     test('executeWithServiceWithoutRef2_listen_成功', () async {
       final container = ProviderContainer.test();
       final sub = container.listen(
-        useCaseProvider.notifier,
+        asyncStateUseCaseProvider.notifier,
         (previous, next) {},
       );
       final notifier = sub.read();
